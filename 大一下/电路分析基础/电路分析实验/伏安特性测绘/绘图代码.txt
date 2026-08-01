@@ -1,0 +1,112 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# ---------------------------------------------------------
+# 设置中文字体，防止图表中文字符显示为方块
+# ---------------------------------------------------------
+plt.rcParams['font.sans-serif'] = ['SimHei']  # Windows 系统通常有黑体 (SimHei)
+# 如果你是 Mac 用户，可以使用下面这行替换上一行：
+# plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+plt.rcParams['axes.unicode_minus'] = False    # 正常显示负号
+
+# =========================================================
+# 绘制表 1.1：线性电阻的伏安特性曲线
+# =========================================================
+# 录入表 1.1 数据
+v1 = np.array([0.0, 2.0, 4.0, 6.0, 8.0, 10.0])       # 电压 V(V)
+i1_mA = np.array([0.0, 10.1, 20.3, 30.5, 40.7, 51.0]) # 电流 I(mA)
+
+# 将电流转换为安培 (A) 用于计算电阻 (R = V/I)
+i1_A = i1_mA / 1000.0
+
+# 线性拟合：I = (1/R) * V + b
+# polyfit(x, y, 1) 返回 [斜率, 截距]
+coefficients = np.polyfit(v1, i1_A, 1)
+slope = coefficients[0] # 斜率即为 1/R
+b = coefficients[1]     # 截距
+R_calc = 1 / slope      # 计算出电阻值 R
+
+# 生成拟合直线的点
+v1_fit = np.linspace(0, 10, 100)
+i1_fit_mA = (slope * v1_fit + b) * 1000  # 转回 mA 用于绘图
+
+# 创建第一个画布
+plt.figure(figsize=(8, 6))
+# 绘制实验数据散点
+plt.scatter(v1, i1_mA, color='blue', label='实验数据点', zorder=5)
+# 绘制拟合直线
+plt.plot(v1_fit, i1_fit_mA, color='red', linestyle='--', label='拟合直线')
+
+# 图表装饰
+plt.title('图 1.3：线性电阻伏安特性曲线', fontsize=14)
+plt.xlabel('电压 V (V)', fontsize=12)
+plt.ylabel('电流 I (mA)', fontsize=12)
+plt.grid(True, linestyle=':', alpha=0.7)
+plt.legend(loc='upper left', fontsize=11)
+
+# 将测算的电阻值标记在图上
+text_str = f'测算电阻 $R \\approx {R_calc:.1f}\\ \\Omega$'
+plt.text(1.0, 40.0, text_str, fontsize=12, color='red', 
+         bbox=dict(facecolor='white', edgecolor='red', alpha=0.8, boxstyle='round,pad=0.5'))
+
+plt.show() # 显示第一张图
+
+
+# =========================================================
+# 绘制表 1.2：非线性电阻的伏安特性曲线
+# =========================================================
+# 录入表 1.2 数据
+v2 = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65, 0.7, 0.71]) # 电压 V(V)
+i2_mA = np.array([0.0, 0.0, 0.0, 0.0, 0.1, 0.5, 1.4, 4.6, 12.8, 18.0]) # 电流 I(mA)
+
+# 创建第二个画布
+plt.figure(figsize=(8, 6))
+# 绘制折线图并带有数据点标记
+plt.plot(v2, i2_mA, marker='o', color='green', linestyle='-', linewidth=2, markersize=6, label='实验数据')
+
+# 图表装饰
+plt.title('图 1.4：非线性电阻伏安特性曲线', fontsize=14)
+plt.xlabel('电压 V (V)', fontsize=12)
+plt.ylabel('电流 I (mA)', fontsize=12)
+plt.grid(True, linestyle=':', alpha=0.7)
+plt.legend(loc='upper left', fontsize=11)
+
+plt.show() # 显示第二张图
+
+# =========================================================
+# 绘制表 1.3：理想电压源与实际电压源的伏安特性曲线
+# =========================================================
+I_mA = np.array([0.0, 10.0, 20.0, 30.0, 40.0])
+
+# 表 1.3：理想电压源电压 V(V)
+V_ideal = np.array([10.0, 10.0, 10.0, 10.0, 10.0])
+
+# 表 1.4：实际电压源电压 V(V)
+V_practical = np.array([10.0, 9.5, 9.0, 8.5, 8.0])
+
+plt.figure(figsize=(9, 6)) # 设置画布大小
+
+# 绘制理想电压源（表1.3） - 使用蓝色虚线和圆形标记
+plt.plot(I_mA, V_ideal, color='blue', linestyle='--', linewidth=2, 
+         marker='o', markersize=8, label='理想电压源')
+
+# 绘制实际电压源（表1.4） - 使用红色实线和方形标记
+plt.plot(I_mA, V_practical, color='red', linestyle='-', linewidth=2, 
+         marker='s', markersize=8, label='实际电压源')
+
+plt.title('图 1.7：理想与实际电压源伏安特性曲线', fontsize=16)
+plt.xlabel('电流 I (mA)', fontsize=14)
+plt.ylabel('电压 V (V)', fontsize=14)
+
+# 设置坐标轴范围，使图表看起来更舒展，Y轴从0开始能反映真实比例
+plt.xlim(-2, 45)
+plt.ylim(0, 12) 
+
+# 添加网格线，方便读数
+plt.grid(True, linestyle=':', alpha=0.8)
+
+# 添加图例，放置在左下角避免遮挡线条
+plt.legend(loc='lower left', fontsize=12)
+
+# 显示绘制结果
+plt.show()
